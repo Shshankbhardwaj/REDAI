@@ -345,17 +345,17 @@ const LandingPage = () => {
     { 
       title: "Appointment Booking", 
       desc: "AI naturally schedules appointments while capturing all necessary information.",
-      url: "/audio/booking.mp3"
+      url: "/audio/8f8326.wav"
     },
     { 
       title: "Lead Qualification", 
       desc: "Smart questioning to identify and prioritize serious prospects.",
-      url: "/audio/qualification.mp3"
+      url: "/audio/e1bf1f48.wav"
     },
     { 
       title: "After-Hours Reception", 
       desc: "Never miss a call again, even when your office is closed.",
-      url: "/audio/after-hours.mp3"
+      url: "/audio/customer-demo.mp3"
     }
   ];
 
