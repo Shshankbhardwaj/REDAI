@@ -348,13 +348,13 @@ const LandingPage = () => {
       url: "/audio/8f8326.wav"
     },
     { 
-      title: "Lead Qualification", 
-      desc: "Smart questioning to identify and prioritize serious prospects.",
+      title: "Appointment Re-scheduling", 
+      desc: "AI naturally re-schedules appointments while capturing all necessary information.",
       url: "/audio/e1bf1f48.wav"
     },
     { 
-      title: "After-Hours Reception", 
-      desc: "Never miss a call again, even when your office is closed.",
+      title: "Follow up to no shows!", 
+      desc: "AI naturally Calls your bookings to confirm and auto-updates the crm if reacheduled!",
       url: "/audio/customer-demo.mp3"
     }
   ];
