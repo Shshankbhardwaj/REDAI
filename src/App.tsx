@@ -128,9 +128,31 @@ interface AudioDemoProps {
   description: string;
   isPlaying: boolean;
   onToggle: () => void;
+  audioUrl: string;
 }
 
-const AudioDemoCard: React.FC<AudioDemoProps> = ({ title, description, isPlaying, onToggle }) => {
+const AudioDemoCard: React.FC<AudioDemoProps> = ({ title, description, isPlaying, onToggle, audioUrl }) => {
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
+
+  React.useEffect(() => {
+    if (isPlaying) {
+      audioRef.current = new Audio(audioUrl);
+      audioRef.current.play().catch(e => console.log("Audio play failed:", e));
+      audioRef.current.onended = () => onToggle();
+    } else {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    }
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, [isPlaying, audioUrl, onToggle]);
+
   return (
     <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300">
       <div className="flex items-start gap-4">
@@ -320,9 +342,21 @@ const LandingPage = () => {
   ];
 
   const audioDemos = [
-    { title: "Appointment Booking", desc: "AI naturally schedules appointments while capturing all necessary information." },
-    { title: "Lead Qualification", desc: "Smart questioning to identify and prioritize serious prospects." },
-    { title: "After-Hours Reception", desc: "Never miss a call again, even when your office is closed." }
+    { 
+      title: "Appointment Booking", 
+      desc: "AI naturally schedules appointments while capturing all necessary information.",
+      url: "/audio/booking.mp3"
+    },
+    { 
+      title: "Lead Qualification", 
+      desc: "Smart questioning to identify and prioritize serious prospects.",
+      url: "/audio/qualification.mp3"
+    },
+    { 
+      title: "After-Hours Reception", 
+      desc: "Never miss a call again, even when your office is closed.",
+      url: "/audio/after-hours.mp3"
+    }
   ];
 
   return (
@@ -490,6 +524,7 @@ const LandingPage = () => {
                 key={i}
                 title={demo.title}
                 description={demo.desc}
+                audioUrl={demo.url}
                 isPlaying={activeAudio === i}
                 onToggle={() => setActiveAudio(activeAudio === i ? null : i)}
               />
