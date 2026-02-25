@@ -33,6 +33,7 @@ import {
   Lock
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import DemoDashboard from './components/DemoDashboard';
 
 // --- Constants ---
 const CONTACT_INFO = {
@@ -60,6 +61,7 @@ const Navbar = () => {
     { label: "Features", href: "/#features" },
     { label: "AI Receptionist", href: "/#ai-receptionist" },
     { label: "ROI Calculator", href: "/#roi" },
+    { label: "Demo Dashboard", href: "/demo", isRoute: true },
     { label: "Contact", href: "/#contact" }
   ];
 
@@ -68,7 +70,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/20">
+            <div className="w-10 h-10 bg-gradient-to-br from-slate-800 to-black rounded-xl flex items-center justify-center shadow-lg shadow-slate-900/20">
               <Phone className="w-6 h-6 text-white" />
             </div>
             <span className="font-heading font-bold text-xl text-slate-800">RedSquare AI</span>
@@ -76,18 +78,24 @@ const Navbar = () => {
 
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map(link => (
-              <a key={link.label} href={link.href} className="text-slate-600 hover:text-red-600 font-medium transition-colors">
-                {link.label}
-              </a>
+              link.isRoute ? (
+                <Link key={link.label} to={link.href} className="text-slate-600 hover:text-black font-medium transition-colors">
+                  {link.label}
+                </Link>
+              ) : (
+                <a key={link.label} href={link.href} className="text-slate-600 hover:text-black font-medium transition-colors">
+                  {link.label}
+                </a>
+              )
             ))}
           </div>
 
           <div className="hidden md:flex items-center gap-4">
-            <a href={`tel:${CONTACT_INFO.supportPhone.replace(/-/g, "")}`} className="text-slate-600 hover:text-red-600 font-medium flex items-center gap-2">
+            <a href={`tel:${CONTACT_INFO.supportPhone.replace(/-/g, "")}`} className="text-slate-600 hover:text-black font-medium flex items-center gap-2">
               <Phone className="w-4 h-4" />
               {CONTACT_INFO.supportPhone}
             </a>
-            <a href={CONTACT_INFO.bookingUrl} target="_blank" rel="noopener noreferrer" className="bg-red-500 text-white px-6 py-3 rounded-full font-heading font-semibold hover:bg-red-600 transition-all duration-300 shadow-lg shadow-red-500/30">
+            <a href={CONTACT_INFO.bookingUrl} target="_blank" rel="noopener noreferrer" className="bg-slate-900 text-white px-6 py-3 rounded-full font-heading font-semibold hover:bg-black transition-all duration-300 shadow-lg shadow-slate-900/30">
               Book a Demo
             </a>
           </div>
@@ -108,11 +116,17 @@ const Navbar = () => {
           >
             <div className="px-4 py-6 space-y-4">
               {navLinks.map(link => (
-                <a key={link.label} href={link.href} onClick={() => setIsOpen(false)} className="block text-slate-600 hover:text-red-600 font-medium py-2 text-lg">
-                  {link.label}
-                </a>
+                link.isRoute ? (
+                  <Link key={link.label} to={link.href} onClick={() => setIsOpen(false)} className="block text-slate-600 hover:text-black font-medium py-2 text-lg">
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a key={link.label} href={link.href} onClick={() => setIsOpen(false)} className="block text-slate-600 hover:text-black font-medium py-2 text-lg">
+                    {link.label}
+                  </a>
+                )
               ))}
-              <a href={CONTACT_INFO.bookingUrl} target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)} className="block bg-red-500 text-white px-6 py-4 rounded-xl font-heading font-semibold text-center text-lg">
+              <a href={CONTACT_INFO.bookingUrl} target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)} className="block bg-slate-900 text-white px-6 py-4 rounded-xl font-heading font-semibold text-center text-lg">
                 Book a Demo
               </a>
             </div>
@@ -136,8 +150,11 @@ const AudioDemoCard: React.FC<AudioDemoProps> = ({ title, description, isPlaying
 
   React.useEffect(() => {
     if (isPlaying) {
+      console.log(`Attempting to play: ${audioUrl}`);
       audioRef.current = new Audio(audioUrl);
-      audioRef.current.play().catch(e => console.log("Audio play failed:", e));
+      audioRef.current.play().catch(e => {
+        console.error("Audio play failed. Check if the file exists at:", audioUrl, e);
+      });
       audioRef.current.onended = () => onToggle();
     } else {
       if (audioRef.current) {
@@ -158,7 +175,7 @@ const AudioDemoCard: React.FC<AudioDemoProps> = ({ title, description, isPlaying
       <div className="flex items-start gap-4">
         <button 
           onClick={onToggle}
-          className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0 ${isPlaying ? 'bg-red-500 text-white shadow-lg shadow-red-500/30' : 'bg-red-500 text-white shadow-lg shadow-red-500/30 hover:bg-red-600'}`}
+          className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0 ${isPlaying ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/30' : 'bg-slate-900 text-white shadow-lg shadow-slate-900/30 hover:bg-black'}`}
         >
           {isPlaying ? <Pause size={24} /> : <Play size={24} className="ml-1" />}
         </button>
@@ -173,7 +190,7 @@ const AudioDemoCard: React.FC<AudioDemoProps> = ({ title, description, isPlaying
             key={i}
             animate={{ height: isPlaying ? `${20 + Math.random() * 80}%` : '20%' }}
             transition={{ duration: 0.2, repeat: isPlaying ? Infinity : 0, repeatType: 'reverse', delay: i * 0.05 }}
-            className={`flex-1 rounded-full transition-colors duration-300 ${isPlaying ? 'bg-red-500' : 'bg-slate-200'}`}
+            className={`flex-1 rounded-full transition-colors duration-300 ${isPlaying ? 'bg-slate-900' : 'bg-slate-200'}`}
           />
         ))}
       </div>
@@ -200,12 +217,12 @@ const ROICalculator = () => {
       <div className="grid md:grid-cols-3 gap-10 mb-12">
         <div className="space-y-4">
           <label className="block text-sm font-medium text-slate-300">
-            Calls Per Month: <span className="text-red-400 font-bold text-xl ml-2">{calls}</span>
+            Calls Per Month: <span className="text-slate-300 font-bold text-xl ml-2">{calls}</span>
           </label>
           <input 
             type="range" min="50" max="1000" step="10" value={calls} 
             onChange={(e) => setCalls(Number(e.target.value))}
-            className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-red-500"
+            className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-slate-400"
           />
           <div className="flex justify-between text-xs text-slate-500">
             <span>50</span>
@@ -215,12 +232,12 @@ const ROICalculator = () => {
 
         <div className="space-y-4">
           <label className="block text-sm font-medium text-slate-300">
-            Missed Call Rate: <span className="text-red-400 font-bold text-xl ml-2">{missRate}%</span>
+            Missed Call Rate: <span className="text-slate-300 font-bold text-xl ml-2">{missRate}%</span>
           </label>
           <input 
             type="range" min="5" max="50" step="1" value={missRate} 
             onChange={(e) => setMissRate(Number(e.target.value))}
-            className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-red-500"
+            className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-slate-400"
           />
           <div className="flex justify-between text-xs text-slate-500">
             <span>5%</span>
@@ -247,11 +264,11 @@ const ROICalculator = () => {
       <div className="grid md:grid-cols-3 gap-6">
         <div className="bg-slate-700/50 backdrop-blur-sm rounded-2xl p-6 text-center border border-white/5">
           <p className="text-slate-400 text-sm mb-1">Monthly Lost Revenue</p>
-          <p className="font-heading font-bold text-3xl text-red-400">${monthlyLost.toLocaleString()}</p>
+          <p className="font-heading font-bold text-3xl text-slate-300">${monthlyLost.toLocaleString()}</p>
         </div>
         <div className="bg-slate-700/50 backdrop-blur-sm rounded-2xl p-6 text-center border border-white/5">
           <p className="text-slate-400 text-sm mb-1">Yearly Lost Revenue</p>
-          <p className="font-heading font-bold text-3xl text-red-400">${yearlyLost.toLocaleString()}</p>
+          <p className="font-heading font-bold text-3xl text-slate-300">${yearlyLost.toLocaleString()}</p>
         </div>
         <div className="bg-emerald-500/20 backdrop-blur-sm rounded-2xl p-6 text-center border border-emerald-500/30">
           <p className="text-emerald-300 text-sm font-medium mb-1">Recoverable with AI</p>
@@ -268,7 +285,7 @@ const Footer = () => (
       <div className="grid md:grid-cols-4 gap-12 mb-16">
         <div className="md:col-span-2">
           <div className="flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-slate-800 to-black rounded-xl flex items-center justify-center">
               <Phone className="w-6 h-6 text-white" />
             </div>
             <span className="font-heading font-bold text-2xl">RedSquare AI</span>
@@ -278,11 +295,11 @@ const Footer = () => (
           </p>
           <div className="space-y-3 text-slate-400">
             <p className="flex items-center gap-3">
-              <Phone className="w-5 h-5 text-red-500" />
+              <Phone className="w-5 h-5 text-slate-400" />
               <span>Support: {CONTACT_INFO.supportPhone}</span>
             </p>
             <p className="flex items-center gap-3">
-              <Mail className="w-5 h-5 text-red-500" />
+              <Mail className="w-5 h-5 text-slate-400" />
               <span>{CONTACT_INFO.email}</span>
             </p>
           </div>
@@ -291,19 +308,19 @@ const Footer = () => (
         <div>
           <h4 className="font-heading font-bold text-lg mb-6">Product</h4>
           <ul className="space-y-4 text-slate-400">
-            <li><a href="#features" className="hover:text-red-400 transition-colors">Features</a></li>
-            <li><a href="#ai-receptionist" className="hover:text-red-400 transition-colors">AI Receptionist</a></li>
-            <li><a href="#roi" className="hover:text-red-400 transition-colors">ROI Calculator</a></li>
-            <li><a href="#contact" className="hover:text-red-400 transition-colors">Contact</a></li>
+            <li><a href="#features" className="hover:text-slate-300 transition-colors">Features</a></li>
+            <li><a href="#ai-receptionist" className="hover:text-slate-300 transition-colors">AI Receptionist</a></li>
+            <li><a href="#roi" className="hover:text-slate-300 transition-colors">ROI Calculator</a></li>
+            <li><a href="#contact" className="hover:text-slate-300 transition-colors">Contact</a></li>
           </ul>
         </div>
         
         <div>
           <h4 className="font-heading font-bold text-lg mb-6">Legal</h4>
           <ul className="space-y-4 text-slate-400">
-            <li><Link to="/privacy-policy" className="hover:text-red-400 transition-colors">Privacy Policy</Link></li>
-            <li><Link to="/refund-policy" className="hover:text-red-400 transition-colors">Refund Policy</Link></li>
-            <li><Link to="/terms-conditions" className="hover:text-red-400 transition-colors">Terms & Conditions</Link></li>
+            <li><Link to="/privacy-policy" className="hover:text-slate-300 transition-colors">Privacy Policy</Link></li>
+            <li><Link to="/refund-policy" className="hover:text-slate-300 transition-colors">Refund Policy</Link></li>
+            <li><Link to="/terms-conditions" className="hover:text-slate-300 transition-colors">Terms & Conditions</Link></li>
           </ul>
         </div>
       </div>
@@ -345,17 +362,17 @@ const LandingPage = () => {
     { 
       title: "Appointment Booking", 
       desc: "AI naturally schedules appointments while capturing all necessary information.",
-      url: "/audio/8f8326.wav"
+      url: "audio/8f8326.wav"
     },
     { 
-      title: "Appointment Re-scheduling", 
-      desc: "AI naturally re-schedules appointments while capturing all necessary information.",
-      url: "/audio/e1bf1f48.wav"
+      title: "Lead Qualification", 
+      desc: "Smart questioning to identify and prioritize serious prospects.",
+      url: "audio/e1bf1f48.wav"
     },
     { 
-      title: "Follow up to no shows!", 
-      desc: "AI naturally Calls your bookings to confirm and auto-updates the crm if reacheduled!",
-      url: "/audio/customer-demo.mp3"
+      title: "After-Hours Reception", 
+      desc: "Never miss a call again, even when your office is closed.",
+      url: "audio/customer-demo.mp3"
     }
   ];
 
@@ -364,7 +381,7 @@ const LandingPage = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-20 md:pt-48 md:pb-32 bg-gradient-to-b from-red-50/50 via-white to-white overflow-hidden">
+      <section className="pt-32 pb-20 md:pt-48 md:pb-32 bg-gradient-to-b from-slate-50 via-white to-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div 
@@ -373,32 +390,32 @@ const LandingPage = () => {
               transition={{ duration: 0.6 }}
               className="relative z-10"
             >
-              <div className="inline-flex items-center gap-2 bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-bold mb-8 shadow-sm">
+              <div className="inline-flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-full text-sm font-bold mb-8 shadow-sm">
                 <Zap size={16} className="fill-current" />
                 <span>AI-Powered Receptionist</span>
               </div>
               <h1 className="font-heading font-bold text-5xl md:text-6xl lg:text-7xl text-slate-900 leading-[1.1] tracking-tight">
                 Never Miss a <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-600">Call Again</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-black">Call Again</span>
               </h1>
               <p className="text-xl text-slate-600 mt-8 leading-relaxed max-w-xl">
                 Your 24/7 AI Receptionist captures every lead, books appointments, and answers questions instantly. Stop losing customers to missed calls.
               </p>
               
-              <div className="bg-red-50 border border-red-100 rounded-3xl p-6 mt-10 shadow-sm max-w-lg">
-                <p className="text-sm text-red-600 font-bold mb-2 uppercase tracking-wider">Try Our AI Receptionist Now:</p>
-                <a href={`tel:${CONTACT_INFO.demoPhone.replace(/[()-\s]/g, "")}`} className="text-3xl font-bold text-red-600 hover:text-red-700 flex items-center gap-3 transition-colors">
+              <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 mt-10 shadow-sm max-w-lg">
+                <p className="text-sm text-slate-900 font-bold mb-2 uppercase tracking-wider">Try Our AI Receptionist Now:</p>
+                <a href={`tel:${CONTACT_INFO.demoPhone.replace(/[()-\s]/g, "")}`} className="text-3xl font-bold text-slate-900 hover:text-black flex items-center gap-3 transition-colors">
                   <Phone className="w-8 h-8 fill-current" />
                   {CONTACT_INFO.demoPhone}
                 </a>
-                <p className="text-xs text-red-400 mt-2 font-medium">Call to experience our AI receptionist in action</p>
+                <p className="text-xs text-slate-400 mt-2 font-medium">Call to experience our AI receptionist in action</p>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 mt-10">
-                <a href={CONTACT_INFO.bookingUrl} target="_blank" rel="noopener noreferrer" className="bg-red-500 text-white px-10 py-5 rounded-full font-heading font-bold text-lg hover:bg-red-600 transition-all duration-300 shadow-xl shadow-red-500/30 flex items-center justify-center gap-2">
+                <a href={CONTACT_INFO.bookingUrl} target="_blank" rel="noopener noreferrer" className="bg-slate-900 text-white px-10 py-5 rounded-full font-heading font-bold text-lg hover:bg-black transition-all duration-300 shadow-xl shadow-slate-900/30 flex items-center justify-center gap-2">
                   Book a Demo <ArrowRight size={20} />
                 </a>
-                <a href="#features" className="border-2 border-slate-200 text-slate-700 px-10 py-5 rounded-full font-heading font-bold text-lg hover:border-red-500 hover:text-red-600 transition-all duration-300 flex items-center justify-center gap-2">
+                <a href="#features" className="border-2 border-slate-200 text-slate-700 px-10 py-5 rounded-full font-heading font-bold text-lg hover:border-black hover:text-black transition-all duration-300 flex items-center justify-center gap-2">
                   See Features
                 </a>
               </div>
@@ -406,7 +423,7 @@ const LandingPage = () => {
               <div className="flex items-center gap-8 mt-12">
                 <div className="flex -space-x-3">
                   {[1, 2, 3, 4, 5].map(i => (
-                    <div key={i} className="w-12 h-12 rounded-full bg-gradient-to-br from-red-200 to-red-300 border-4 border-white flex items-center justify-center text-xs font-bold text-slate-700 shadow-sm">
+                    <div key={i} className="w-12 h-12 rounded-full bg-gradient-to-br from-slate-200 to-slate-300 border-4 border-white flex items-center justify-center text-xs font-bold text-slate-700 shadow-sm">
                       {String.fromCharCode(64 + i)}
                     </div>
                   ))}
@@ -426,22 +443,22 @@ const LandingPage = () => {
               transition={{ duration: 0.8 }}
               className="relative"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-600 rounded-[3rem] blur-3xl opacity-10" />
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-800 to-black rounded-[3rem] blur-3xl opacity-10" />
               <div className="relative bg-white rounded-[3rem] shadow-2xl p-8 border border-slate-100">
                 <div className="space-y-6">
                   <div className="flex items-center justify-between pb-6 border-b border-slate-100">
                     <h3 className="font-heading font-bold text-xl text-slate-800">AI Receptionist Dashboard</h3>
                     <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                      <span className="text-sm text-red-600 font-bold uppercase tracking-widest">Live</span>
+                      <div className="w-2 h-2 bg-slate-900 rounded-full animate-pulse" />
+                      <span className="text-sm text-slate-900 font-bold uppercase tracking-widest">Live</span>
                     </div>
                   </div>
                   
                   <div className="space-y-4">
-                    <div className="bg-gradient-to-r from-red-50 to-white rounded-2xl p-5 border border-red-100/50">
+                    <div className="bg-gradient-to-r from-slate-50 to-white rounded-2xl p-5 border border-slate-100/50">
                       <div className="flex items-center gap-4 mb-3">
-                        <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                          <Phone className="w-5 h-5 text-red-600" />
+                        <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center">
+                          <Phone className="w-5 h-5 text-slate-900" />
                         </div>
                         <span className="text-sm font-bold text-slate-700">Incoming Call</span>
                       </div>
@@ -465,7 +482,7 @@ const LandingPage = () => {
 
                   <div className="bg-slate-900 rounded-2xl p-6 text-white">
                     <div className="flex items-center gap-3 mb-4">
-                      <BarChart3 className="w-5 h-5 text-red-500" />
+                      <BarChart3 className="w-5 h-5 text-slate-400" />
                       <span className="text-sm font-bold uppercase tracking-widest">Today's Performance</span>
                     </div>
                     <div className="grid grid-cols-2 gap-6">
@@ -475,7 +492,7 @@ const LandingPage = () => {
                       </div>
                       <div>
                         <p className="text-slate-400 text-xs mb-1">Booked</p>
-                        <p className="text-2xl font-bold text-red-500">12</p>
+                        <p className="text-2xl font-bold text-slate-400">12</p>
                       </div>
                     </div>
                   </div>
@@ -500,7 +517,7 @@ const LandingPage = () => {
                 whileHover={{ y: -10 }}
                 className="bg-slate-50 rounded-[2.5rem] p-10 hover:shadow-2xl hover:bg-white border border-transparent hover:border-slate-100 transition-all duration-300 group"
               >
-                <div className="w-16 h-16 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mb-8 group-hover:bg-red-500 group-hover:text-white transition-all duration-300 shadow-sm">
+                <div className="w-16 h-16 rounded-2xl bg-slate-100 text-slate-900 flex items-center justify-center mb-8 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300 shadow-sm">
                   <f.icon size={32} />
                 </div>
                 <h3 className="font-heading font-bold text-2xl text-slate-900 mb-4">{f.title}</h3>
@@ -553,31 +570,31 @@ const LandingPage = () => {
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="bg-white rounded-[2.5rem] p-10 text-center hover:shadow-2xl transition-all group">
-              <div className="w-20 h-20 bg-red-100 text-red-600 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:bg-red-500 group-hover:text-white transition-all duration-300">
+              <div className="w-20 h-20 bg-slate-100 text-slate-900 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300">
                 <Phone size={36} />
               </div>
               <h3 className="font-heading font-bold text-2xl text-slate-900 mb-4">Sales Inquiries</h3>
-              <a href={`tel:${CONTACT_INFO.supportPhone.replace(/-/g, "")}`} className="text-red-600 font-bold text-xl hover:underline">
+              <a href={`tel:${CONTACT_INFO.supportPhone.replace(/-/g, "")}`} className="text-slate-900 font-bold text-xl hover:underline">
                 {CONTACT_INFO.supportPhone}
               </a>
             </div>
             
             <div className="bg-white rounded-[2.5rem] p-10 text-center hover:shadow-2xl transition-all group">
-              <div className="w-20 h-20 bg-red-100 text-red-600 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:bg-red-500 group-hover:text-white transition-all duration-300">
+              <div className="w-20 h-20 bg-slate-100 text-slate-900 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300">
                 <Mail size={36} />
               </div>
               <h3 className="font-heading font-bold text-2xl text-slate-900 mb-4">Email Us</h3>
-              <a href={`mailto:${CONTACT_INFO.email}`} className="text-red-600 font-bold text-xl hover:underline break-all">
+              <a href={`mailto:${CONTACT_INFO.email}`} className="text-slate-900 font-bold text-xl hover:underline break-all">
                 {CONTACT_INFO.email}
               </a>
             </div>
             
             <div className="bg-white rounded-[2.5rem] p-10 text-center hover:shadow-2xl transition-all group">
-              <div className="w-20 h-20 bg-red-100 text-red-600 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:bg-red-500 group-hover:text-white transition-all duration-300">
+              <div className="w-20 h-20 bg-slate-100 text-slate-900 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300">
                 <Calendar size={36} />
               </div>
               <h3 className="font-heading font-bold text-2xl text-slate-900 mb-4">Book a Demo</h3>
-              <a href={CONTACT_INFO.bookingUrl} target="_blank" rel="noopener noreferrer" className="text-red-600 font-bold text-xl hover:underline">
+              <a href={CONTACT_INFO.bookingUrl} target="_blank" rel="noopener noreferrer" className="text-slate-900 font-bold text-xl hover:underline">
                 Schedule Demo Call
               </a>
             </div>
@@ -613,6 +630,7 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/demo" element={<DemoDashboard />} />
         <Route path="/privacy-policy" element={
           <PolicyPage 
             title="Privacy Policy" 
